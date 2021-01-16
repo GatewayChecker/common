@@ -1,0 +1,213 @@
+package com.brandsure.common;
+
+// Report object used to generate the report
+// writes an HTML report.
+
+import java.util.ArrayList;
+import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.io.IOException;
+import org.apache.log4j.Logger;
+
+public class Report {
+    String schemaVersion;
+    String date;
+    String softwareVersion = "1.6.1";
+    String xmlFilename;    // Name of the output xml report
+    String customMessageFilename = null; // filename for the custom error messages
+    String outputDir;
+    MessageMapper customMessages = new MessageMapper();
+    ArrayList<String> xsdErrorMessages = new ArrayList<String>(); // Only Errors from XSD processing
+    ArrayList<String> errorMessages = new ArrayList<String>(); // Generic error messages not related to XSD Errors
+    boolean isWellformed = false;
+    Boolean xsdValidated = null;
+
+    public static final String BRANDSURE = "brandsure";
+    public static final String XML_FILE = "XMLFile";
+    public static final String DATE = "date";
+    public static final String SOFTWARE_VERSION = "SoftwareVersion";
+    public static final String XML_WELLFORMED = "WellFormed";
+    public static final String XSD_SCHEMA_VERSION = "SchemaVersion";
+    public static final String XSD_VALIDATED = "XSDValidated";
+    public static final String XSD_VALIDATION_ERRORS = "XSDValidationErrors";
+    public static final String PROCESSING_ERRORS = "ProcessingErrors";
+    public static final String ERROR = "error";
+    public static final String RAW_ERROR = "RawError";
+    public static final String CUSTOM_ERROR = "CustomError";
+
+
+    static Logger logger = Logger.getLogger(Report.class);
+
+    public void setSchemaVersion(String schema) {
+        this.schemaVersion = schema;
+    }
+
+    public void setDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        date = sdf.format(new Date());
+    }
+
+    public void setSoftwareVersion(String version) {
+        softwareVersion = version;
+    }
+
+    public void setXmlFilename(String filename) {
+        xmlFilename = filename;
+    }
+
+    public void setCustomMessageFilename(String filename) {
+        customMessageFilename = filename;
+    }
+
+    public void setOutputDir(String directory) {
+        outputDir = directory;
+    }
+
+    public void addXsdErrorMessage(String message) {
+        xsdErrorMessages.add(message);
+    }
+
+    public void addErrorMessage(String message) { errorMessages.add(message); }
+
+    public void setIsWellformed(boolean value) {
+        isWellformed = value;
+    }
+
+    public void setIsXsdValidated(boolean value) {
+        xsdValidated = value;
+    }
+
+    // Convert a true to PASS and a false to FAIL
+    private String toPassFail(boolean value) {
+        if (value) {
+            return "PASS";
+        } else {
+            return "FAIL";
+        }
+    }
+
+
+
+    public void generateXML() throws IOException {
+        PrintWriter pw = null;
+
+        try {
+            // make output dir if it doesn't exist
+            File directory = new File(outputDir);
+            if(!directory.exists()) {
+                directory.mkdir();
+            }
+
+            // Load the custom error messages
+            if (customMessageFilename != null) {
+                customMessages.init(customMessageFilename);
+            }
+
+            String outputFilename = makeOutputFilename();
+            File file = new File(outputFilename);
+            FileWriter fw = new FileWriter(file, false);
+            pw = new PrintWriter(fw);
+            // Now build the output xml
+            setDate();
+            pw.println("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>");
+            pw.println(beginTag(BRANDSURE));
+            printElement(pw, XML_FILE, xmlFilename);
+            printElement(pw, DATE, date);
+            printElement(pw, SOFTWARE_VERSION, softwareVersion);
+            printElement(pw, XML_WELLFORMED, toPassFail(isWellformed));
+            printElement(pw, XSD_SCHEMA_VERSION, schemaVersion);
+            if (xsdValidated != null) {
+                printElement(pw, XSD_VALIDATED, toPassFail(xsdValidated));
+            }
+            if (!xsdErrorMessages.isEmpty()) {
+                printXSDErrorMessages(pw);
+            }
+            printErrorMessages(pw);
+            pw.println(endTag(BRANDSURE));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (pw != null) {
+                pw.close();
+            }
+        }
+    }
+
+    private void printXSDErrorMessages(PrintWriter pw) {
+        pw.println(beginTag(XSD_VALIDATION_ERRORS));
+        for (String errorMessage: xsdErrorMessages) {
+            pw.println("  " + beginTag(ERROR));
+            // sanitize the error message by escaping xml like tags
+            pw.println("    " + beginTag(RAW_ERROR) + encode(errorMessage) + endTag(RAW_ERROR));
+            String customMessage = customMessages.getCustomMessage(errorMessage);
+            if (customMessage != null) { // don't want to print a "null"
+                pw.println("    " + beginTag(CUSTOM_ERROR) + customMessage + endTag(CUSTOM_ERROR));
+            }
+            pw.println("  " + endTag(ERROR));
+        }
+        pw.println(endTag(XSD_VALIDATION_ERRORS));
+    }
+
+    private void printErrorMessages(PrintWriter pw) {
+        pw.println(beginTag(PROCESSING_ERRORS));
+        for (String errorMessage: errorMessages) {
+            pw.println("  " + beginTag(ERROR));
+            // sanitize the error message by escaping xml like tags
+            pw.println("    " + beginTag(RAW_ERROR) + encode(errorMessage) + endTag(RAW_ERROR));
+            String customMessage = customMessages.getCustomMessage(errorMessage);
+            if (customMessage != null) { // don't want to print a "null"
+                pw.println("    " + beginTag(CUSTOM_ERROR) + customMessage + endTag(CUSTOM_ERROR));
+            }
+            pw.println("  " + endTag(ERROR));
+        }
+        pw.println(endTag(PROCESSING_ERRORS));
+    }
+
+
+    /**
+     * Escape any strings that don't belong inside xml tags
+     * @param input
+     * @return
+     */
+    public static String encode(String input) {
+        if (input == null) {
+            return null;
+        } else {
+            try {
+                return URLEncoder.encode(input, StandardCharsets.UTF_8.toString());
+            } catch (Exception e) {
+                logger.error("error urlending string " + input, e);
+                return null;
+            }
+        }
+    }
+
+    private void printElement(PrintWriter pw, String tag, String value) {
+        pw.println(beginTag(tag) + value + endTag(tag));
+    }
+
+
+    private String beginTag(String name) {
+        return "<" + name + ">";
+    }
+
+    private String endTag(String name) {
+        return "</" + name + ">";
+    }
+
+    private String makeOutputFilename() {
+        int index =xmlFilename.lastIndexOf(File.separator);
+        // get everything after separator
+        String filenameWithoutPath = xmlFilename.substring(index);
+        String outputFilename = outputDir + File.separator + filenameWithoutPath.replace(".xml", "-report.xml");
+        logger.info("Report outputFile " + outputFilename);
+        return outputFilename;
+    }
+
+}

@@ -4,26 +4,26 @@ import org.apache.log4j.Logger;
 
 public class Sgtin {
 	/**
-	SGTIN=0371571.012128.03223,
-			GTIN=00371571121280,
-			LOT=KASM01, SN=03223,
-			EXP=240731
-			**/
-	
+	 * SGTIN=0371571.012128.03223,
+	 * GTIN=00371571121280,
+	 * LOT=KASM01, SN=03223,
+	 * EXP=240731
+	 **/
+
 	static Logger logger = Logger.getLogger(Sgtin.class);
-	 
+
 	private static final String NOT_FOUND = "";
-	
-	
-	String sgtin; 
-	String uniqueId; 
+
+
+	String sgtin;
+	String uniqueId;
 	String serialNumber;
 	String[] sgtinParts;
 
 	public Sgtin(String sgtin) {
 		this.sgtin = sgtin;
 	}
-	
+
 	public void parse() {
 		logger.debug("sgtin:" + sgtin);
 		uniqueId = getStringPartAfterToken(sgtin, "urn:epc:id:sgtin:");
@@ -32,15 +32,15 @@ public class Sgtin {
 		sgtinParts = uniqueId.split("\\.");
 		serialNumber = sgtinParts[2];
 	}
-	
+
 	public String getUniqueId() {
 		return uniqueId;
 	}
-	
+
 	public String getSerialNumber() {
 		return serialNumber;
 	}
-	
+
 	public String getGtin() {
 		// Get the first char on part 1 and move to the front
 		String part1 = sgtinParts[1];
@@ -49,36 +49,60 @@ public class Sgtin {
 		String gtinWoChecksum = part1FirstChar + sgtinParts[0] + part1Remainder;
 		logger.debug("gtinWoChecksum " + gtinWoChecksum);
 		String checksum = calcChecksumOddInputDigits(gtinWoChecksum);
-		String gtinWithChecksum =  gtinWoChecksum + checksum; 
+		String gtinWithChecksum = gtinWoChecksum + checksum;
 		logger.debug("gtinWithChecksum " + gtinWithChecksum);
 		return gtinWithChecksum;
 	}
 
 	public String getCompanyCode() {
-		String companyCode = sgtinParts[0].substring(2,7);
+		String companyCode = sgtinParts[0].substring(2, 7);
 		return companyCode;
 	}
 
 	public String getProductFamily() {
-		String companyCode = sgtinParts[1].substring(1,4);
+		String companyCode = sgtinParts[1].substring(1, 4);
 		return companyCode;
 	}
 
 	public String getPackagingCode() {
-		String companyCode = sgtinParts[1].substring(4,6);
+		String companyCode = sgtinParts[1].substring(4, 6);
 		return companyCode;
 	}
 
-
-
-
-
+	@Deprecated
 	public String getReleaseGLN() {
 		String glnWoChecksum = sgtinParts[0] + "00000";
 		String glnWithChecksum = glnWoChecksum + calcChecksumEvenInputDigits(glnWoChecksum);
-		return glnWithChecksum; 
+		return glnWithChecksum;
 	}
-	
+
+	/* GS1 + 00000 + 1 digit checksum
+	 * GLN = 12 digits + checksum. LocRef digits adjust to match length
+	 * Match the location Ref digits length to get the correct final length
+	 * company code can be 4 or 5 digits
+	 */
+	public String getGLN() {
+		String GS1 = getGS1();  // 03 plus company code
+		String locationReference;
+		if (GS1.length()==7) {
+			locationReference = "00000";
+		} else if(GS1.length()==6) {
+			locationReference = "000000";
+		} else {
+			locationReference = "";  // set a default
+			logger.error("Unsupported length for GS1 length:" + GS1.length());
+		}
+
+		String GLNwoCheckDigit = GS1 + locationReference;
+		String checkDigit = calcChecksumEvenInputDigits(GLNwoCheckDigit);
+		String GLN = GS1 + locationReference + checkDigit;
+		return GLN;
+
+	}
+	public String getGS1() {
+		String GS1 = "03" + getCompanyCode();
+		return GS1;
+	}
 	
 	/** apply checksum algorithm for 12 digit GTIN
 	 * multiply digit 0 by 1, 
@@ -122,6 +146,7 @@ public class Sgtin {
 		return tenMinusLastDigit(sum); 
 	}
 
+
 	/**
 	 * Subtract the last digit of the sum from 10. This is the checksum digit
 	 * @param sum
@@ -140,7 +165,6 @@ public class Sgtin {
 			return Integer.toString(10 - lastDigit);
 		}
 	}
-
 
 	
 	//TODO - this is from ExtractEvents. Move to common location

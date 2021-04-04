@@ -2,7 +2,7 @@ package com.brandsure.common;
 
 import org.apache.log4j.Logger;
 
-public class Sgtin {
+public class Sgtin extends BaseGtin {
 	/**
 	 * SGTIN=0371571.012128.03223,
 	 * GTIN=00371571121280,
@@ -76,75 +76,14 @@ public class Sgtin {
 		return glnWithChecksum;
 	}
 
-	/* GS1 + 00000 + 1 digit checksum
-	 * GLN = 12 digits + checksum. LocRef digits adjust to match length
-	 * Match the location Ref digits length to get the correct final length
-	 * company code can be 4 or 5 digits
-	 */
-	public String getGLN() {
-		String GS1 = getGS1();  // 03 plus company code
-		String locationReference;
-		if (GS1.length()==7) {
-			locationReference = "00000";
-		} else if(GS1.length()==6) {
-			locationReference = "000000";
-		} else {
-			locationReference = "";  // set a default
-			logger.error("Unsupported length for GS1 length:" + GS1.length());
-		}
 
-		String GLNwoCheckDigit = GS1 + locationReference;
-		String checkDigit = calcChecksumEvenInputDigits(GLNwoCheckDigit);
-		String GLN = GS1 + locationReference + checkDigit;
-		return GLN;
 
-	}
 	public String getGS1() {
 		String GS1 = "03" + getCompanyCode();
 		return GS1;
 	}
 	
-	/** apply checksum algorithm for 12 digit GTIN
-	 * multiply digit 0 by 1, 
-	 * digit 1 by 3
-	 *digit 2 by 1, etc
-	 **/
-	public String calcChecksumEvenInputDigits(String gtinWoChecksum) {
-		int sum = 0;
-		for (int i=0; i<gtinWoChecksum.length(); i++) {
-			char digitAsChar = gtinWoChecksum.charAt(i);
-			int digit = digitAsChar - '0';
-			if (i%2 == 0) {
-				sum += digit * 1;
-			} else {
-				sum += digit * 3;
-			}
-		}	
-		
-		return tenMinusLastDigit(sum); 
-	}
-	
-	
-	
-	/** apply checksum algorithm for 13 digit GTIN
-	 * multiply digit 0 by 3, 
-	 * digit 1 by 1
-	 *digit 2 by 3, etc
-	 **/
-	public String calcChecksumOddInputDigits(String gtinWoChecksum) {
-		int sum = 0;
-		for (int i=0; i<gtinWoChecksum.length(); i++) {
-			char digitAsChar = gtinWoChecksum.charAt(i);
-			int digit = digitAsChar - '0';
-			if (i%2 == 0) {
-				sum += digit * 3;
-			} else {
-				sum += digit * 1;
-			}
-		}	
-		
-		return tenMinusLastDigit(sum); 
-	}
+
 
 
 	/**

@@ -2,7 +2,7 @@ package com.brandsure.common;
 
 import org.apache.log4j.Logger;
 
-public class Gtin {
+public class Gtin extends BaseGtin {
 
     static Logger logger = Logger.getLogger(Gtin.class);
 
@@ -55,11 +55,19 @@ public class Gtin {
         return checkSum;
     }
 
+    public String getGtin() {return gtin;}
+
+
+    // 03 plus FDALabelerCode
+    public String getGS1() {
+        String GS1 = "03" + getFDALablerCode();
+        return GS1;
+    }
+
     // Check the check sum
     public void validate() throws IllegalArgumentException {
         String gtinWoChecksum = gtin.substring(0,13);
-        Sgtin sgtin = new Sgtin("00"); // just want to use it's function
-        String calculatedChecksum = sgtin.calcChecksumOddInputDigits(gtinWoChecksum);
+        String calculatedChecksum = calcChecksumOddInputDigits(gtinWoChecksum);
         if (!calculatedChecksum.equals(getCheckSum())) {
             throw new IllegalArgumentException("Actual checksum " + getCheckSum()
                     + " does not match calculated checksum " + calculatedChecksum);

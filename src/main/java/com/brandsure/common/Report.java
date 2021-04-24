@@ -124,10 +124,14 @@ public class Report {
             if (xsdValidated != null) {
                 printElement(pw, XSD_VALIDATED, toPassFail(xsdValidated));
             }
+            // print XSD validation errors, if any
             if (!xsdErrorMessages.isEmpty()) {
                 printXSDErrorMessages(pw);
             }
-            printErrorMessages(pw);
+            // print other (non-XSD validation) processing errors, if any
+            if (!errorMessages.isEmpty()) {
+                printErrorMessages(pw);
+            }
             pw.println(endTag(BRANDSURE));
         } catch (IOException e) {
             e.printStackTrace();

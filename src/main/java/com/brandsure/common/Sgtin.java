@@ -69,15 +69,6 @@ public class Sgtin extends BaseGtin {
 		return companyCode;
 	}
 
-	@Deprecated
-	public String getReleaseGLN() {
-		String glnWoChecksum = sgtinParts[0] + "00000";
-		String glnWithChecksum = glnWoChecksum + calcChecksumEvenInputDigits(glnWoChecksum);
-		return glnWithChecksum;
-	}
-
-
-
 	public String getGS1() {
 		String GS1 = "03" + getCompanyCode();
 		return GS1;

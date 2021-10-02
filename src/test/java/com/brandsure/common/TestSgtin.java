@@ -64,27 +64,33 @@ String sgtinGtinPairs[][] = {
 	}
 
 	@Test
-	public void testGetCompanyCode() {
+	public void testGetCodes_5_3_2_pattern() {
 		Sgtin sgtin = new Sgtin("0371571.012128.03223");
 		sgtin.parse();
+
 		String expectedCompanyCode = "71571";
 		Assert.assertEquals(expectedCompanyCode, sgtin.getCompanyCode());
-	}
 
-	@Test
-	public void testGetProductFamily() {
-		Sgtin sgtin = new Sgtin("0371571.012128.03223");
-		sgtin.parse();
 		String expectedProductFamily = "121";
 		Assert.assertEquals(expectedProductFamily, sgtin.getProductFamily());
+
+		String expectedPackagingCode = "28";
+		Assert.assertEquals(expectedPackagingCode, sgtin.getPackagingCode());
+
 	}
 
 	@Test
-	public void testGetPackagingCode() {
-		Sgtin sgtin = new Sgtin("0371571.012128.03223");
+	public void testGetCodes_4_4_2_pattern() {
+		Sgtin sgtin = new Sgtin("030093.0720198.1");
 		sgtin.parse();
-		String expectedPackagingCode = "28";
+
+		String expectedCompanyCode = "0093";
+		Assert.assertEquals(expectedCompanyCode, sgtin.getCompanyCode());
+
+		String expectedProductFamily = "7201";
+		Assert.assertEquals(expectedProductFamily, sgtin.getProductFamily());
+
+		String expectedPackagingCode = "98";
 		Assert.assertEquals(expectedPackagingCode, sgtin.getPackagingCode());
 	}
-
 }

@@ -22,6 +22,10 @@ These ProcessingErrors tags are not for XSDValidation. They are for any processi
 XSD Validation Errors, if there were any, would come out with bracketing XMLElements
 <XSDValidationErrors></XSDValidationErrors>
 
+2.3.1
+Fixed bug that doesn't correctly partition input SGTIN
+code with a 4-4-2 digit pattern
+
 
 ---------------------------------------------
 Where to update the common package version for a new release. 

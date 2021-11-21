@@ -30,6 +30,7 @@ code with a 4-4-2 digit pattern
 11/13/21
 Added Ndc class to support generating a GTIN from an NDC code.
 Add a method getSGLN to get a SGLN from a GS1
+Moved GTIN_DTO from ndc project to common. 
 
 
 ---------------------------------------------

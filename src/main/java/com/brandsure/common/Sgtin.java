@@ -2,6 +2,10 @@ package com.brandsure.common;
 
 import org.apache.log4j.Logger;
 
+
+/**
+ * Takes an SGTIN as input and breaks it into it's component parts.
+ */
 public class Sgtin extends BaseGtin {
 	/**
 	 * SGTIN=0371571.012128.03223,
@@ -14,11 +18,11 @@ public class Sgtin extends BaseGtin {
 
 	private static final String NOT_FOUND = "";
 
-
 	String sgtin;
 	String uniqueId;
 	String serialNumber;
 	String[] sgtinParts;
+	// We expect the sgtin to have two parts divided by a .
 	int part0Length;
 	int part1Length;
 	int companyCodeDigits;
@@ -88,6 +92,7 @@ public class Sgtin extends BaseGtin {
 		return packagingCode;
 	}
 
+	// GS1 = 03 + company code
 	public String getGS1() {
 		String GS1 = "03" + getCompanyCode();
 		return GS1;
@@ -115,8 +120,7 @@ public class Sgtin extends BaseGtin {
 		}
 	}
 
-	
-	//TODO - this is from ExtractEvents. Move to common location
+
 	  public static String getStringPartAfterToken(String fullString, String token) {
 	    	String lastPart = NOT_FOUND;  // default
 	    	if ((fullString == null) || fullString.isEmpty()) {

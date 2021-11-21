@@ -2,9 +2,11 @@ package com.brandsure.common;
 
 import org.apache.log4j.Logger;
 
+/**
+ * Takes a GTIN as input and breaks it into it's component parts.
+ * example GTIN=00371571121280,
+ */
 public class Gtin extends BaseGtin {
-
-    static Logger logger = Logger.getLogger(Gtin.class);
 
     String gtin;
     String indicatorDigit;
@@ -12,6 +14,8 @@ public class Gtin extends BaseGtin {
     String FDALablerCode;
     String mfgItemReference;
     String checkSum;
+
+    static Logger logger = Logger.getLogger(Gtin.class);
 
     public Gtin(String gtin) {
         this.gtin = gtin;

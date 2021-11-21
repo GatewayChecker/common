@@ -26,6 +26,11 @@ XSD Validation Errors, if there were any, would come out with bracketing XMLElem
 Fixed bug that doesn't correctly partition input SGTIN
 code with a 4-4-2 digit pattern
 
+2.4.1
+11/13/21
+Added Ndc class to support generating a GTIN from an NDC code.
+Add a method getSGLN to get a SGLN from a GS1
+
 
 ---------------------------------------------
 Where to update the common package version for a new release. 

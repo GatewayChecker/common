@@ -50,9 +50,28 @@ public class BaseGtin {
 
         String GLNwoCheckDigit = GS1 + locationReference;
         String checkDigit = calcChecksumEvenInputDigits(GLNwoCheckDigit);
-        String GLN = GS1 + locationReference + checkDigit;
+        String GLN =  GLNwoCheckDigit + checkDigit;
         return GLN;
+    }
 
+    /**
+     * SGLN is GS1 company prefix plus . + enough zeros to make it 12 digits + .0
+     * @param GS1
+     */
+    public String getSGLN(String GS1) throws IllegalArgumentException {
+        String SGLN;
+        if (GS1 == null) throw new IllegalArgumentException("GS1 is null");
+
+        int gs1Length = GS1.length();
+        // find difference from 12 digits
+        int digitsToAdd = 12 - gs1Length;
+        StringBuffer extraZeros = new StringBuffer();
+        for (int i=0; i<digitsToAdd; i++) {
+            extraZeros.append("0");
+        }
+
+        SGLN = GS1 + "." + extraZeros.toString() + ".0";
+        return SGLN;
     }
 
     /** apply checksum algorithm for 12 digit GTIN

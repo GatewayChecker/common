@@ -93,4 +93,13 @@ String sgtinGtinPairs[][] = {
 		String expectedPackagingCode = "98";
 		Assert.assertEquals(expectedPackagingCode, sgtin.getPackagingCode());
 	}
+
+	// SGLN is GS1 company prefix plus . + enough zeros to make it 12 digits + .0
+	@Test
+	public  void testGetSGLN() {
+	   	Sgtin sgtin = new Sgtin("030093.0720198.1"); // We don't use this number
+		String sgln = sgtin.getSGLN("0300937");
+
+		Assert.assertEquals("0300937.00000.0", sgln);
+	}
 }

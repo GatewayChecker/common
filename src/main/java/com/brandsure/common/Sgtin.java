@@ -16,7 +16,6 @@ public class Sgtin extends BaseGtin {
 
 	static Logger logger = Logger.getLogger(Sgtin.class);
 
-	private static final String NOT_FOUND = "";
 
 	String sgtin;
 	String uniqueId;
@@ -94,49 +93,13 @@ public class Sgtin extends BaseGtin {
 
 	// GS1 = 03 + company code
 	public String getGS1() {
-		String GS1 = "03" + getCompanyCode();
+		String GS1 = getGS1FromFDALabelerCode(getCompanyCode());
 		return GS1;
 	}
-	
 
 
 
-	/**
-	 * Subtract the last digit of the sum from 10. This is the checksum digit
-	 * @param sum
-	 * @return
-	 */
-	private String tenMinusLastDigit(int sum) {
 
-		String sumAsString = Integer.toString(sum);
-		char lastDigitAsChar =  sumAsString.charAt( sumAsString.length() - 1);
-		// subtract last digit from 10
-		int lastDigit = lastDigitAsChar - '0';
-		// Deal with case of 10 - 0 = 10 which is 2 digits, not 1
-		if (lastDigit == 0) {
-			return "0";
-		} else {
-			return Integer.toString(10 - lastDigit);
-		}
-	}
-
-
-	  public static String getStringPartAfterToken(String fullString, String token) {
-	    	String lastPart = NOT_FOUND;  // default
-	    	if ((fullString == null) || fullString.isEmpty()) {
-	    		logger.error("input string is null or empty");
-	    		lastPart = NOT_FOUND; 
-			} else {
-				String[] eventTypeParts = fullString.split(token);
-				if (eventTypeParts.length > 1) {
-					lastPart = eventTypeParts[1];
-				} else {
-					logger.info("Can't extract part after trying to split string " + fullString + " on token " + token);
-					lastPart = fullString; 
-				}
-			}
-	    	return lastPart;
-	    }
 
 	/**
 	 * Take a SGTIN type ID and convert the last section to a *
@@ -148,5 +111,22 @@ public class Sgtin extends BaseGtin {
 		int dotIndex = label.lastIndexOf('.');
 		String newLabel = label.substring(0, dotIndex+1) + '*';
 		return newLabel;
+	}
+
+	// Make a GTIN from the additionalTradeItemIdentification attribute (in EPCIS chema 1.2)
+	// in the XML product identifier section.
+	//The drugTradeID is an SGTIN without the "urn:epc:idpat:sgtin:" prefix
+	public  String makeGTINFromDrugTradeID(String drugTradeID) {
+		//use drugTradeId and move first digit after decimal
+		//		indicatorDigit before 03 below.
+		Sgtin sgtin = new Sgtin(drugTradeID);
+		String gtin = sgtin.getGtin();
+	  /**
+		String gtinWoCheckSum = "03" + drugID;
+		String checkSum = calcChecksumEvenInputDigits(gtinWoCheckSum);
+		String gtin = gtinWoCheckSum + checkSum;
+		return gtin;
+	   **/
+	   return gtin;
 	}
 }

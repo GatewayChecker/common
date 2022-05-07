@@ -10,12 +10,8 @@ import org.apache.log4j.Logger;
 public class Ndc extends BaseGtin {
 
     String ndc;  // ndc code with hyphens
-    String companyCode;
-    String productFamily;
-    String packagingCode;
-    boolean ndcHasHyphens;
 
-    static Logger logger = Logger.getLogger(Gtin.class);
+    static Logger logger = Logger.getLogger(Ndc.class);
 
     public Ndc(String ndc) {
         this.ndc = ndc;
@@ -54,6 +50,16 @@ public class Ndc extends BaseGtin {
         String calculatedChecksum = calcChecksumOddInputDigits(GtinWoChecksum);
         String GTIN = GtinWoChecksum + calculatedChecksum;
         return GTIN;
+    }
+
+    public String getCompanyCode() {
+        String[] ndcParts = ndc.split("-");
+        if (ndcParts.length == 3) {
+            return ndcParts[0];
+        } else {
+            logger.error("NDC code with hyphens is missing sections " + ndc);
+            return "";
+        }
     }
 
 }

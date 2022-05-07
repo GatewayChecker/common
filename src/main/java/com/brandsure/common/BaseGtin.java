@@ -2,8 +2,12 @@ package com.brandsure.common;
 
 import org.apache.log4j.Logger;
 
+/**
+ * Contains methods useful for SGTIN, SSCC and SGLN processing
+ */
 public class BaseGtin {
     static Logger logger = Logger.getLogger(BaseGtin.class);
+    public static final String NOT_FOUND = "";
 
     /**
      * Subtract the last digit of the sum from 10. This is the checksum digit
@@ -54,6 +58,17 @@ public class BaseGtin {
         return GLN;
     }
 
+    /**
+     * Given the company code, return the GS1.
+     * The Company code is the first section of the hyphenated ndc
+     * e.g. 0002-1234-98. Company code is 0002
+     * @param FDALabelerCode
+     * @return GS1 String
+     */
+    public String getGS1FromFDALabelerCode(String FDALabelerCode) {
+        String GS1 = "03" + FDALabelerCode;
+        return GS1;
+    }
     /**
      * SGLN is GS1 company prefix plus . + enough zeros to make it 12 digits + .0
      * @param GS1
@@ -114,6 +129,23 @@ public class BaseGtin {
         }
 
         return tenMinusLastDigit(sum);
+    }
+
+    public static String getStringPartAfterToken(String fullString, String token) {
+        String lastPart = NOT_FOUND;  // default
+        if ((fullString == null) || fullString.isEmpty()) {
+            logger.error("input string is null or empty");
+            lastPart = NOT_FOUND;
+        } else {
+            String[] eventTypeParts = fullString.split(token);
+            if (eventTypeParts.length > 1) {
+                lastPart = eventTypeParts[1];
+            } else {
+                logger.info("Can't extract part after trying to split string " + fullString + " on token " + token);
+                lastPart = fullString;
+            }
+        }
+        return lastPart;
     }
 
 }

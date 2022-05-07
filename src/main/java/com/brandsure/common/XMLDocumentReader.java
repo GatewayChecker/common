@@ -44,7 +44,9 @@ public class XMLDocumentReader {
                 System.exit(EXIT_FAILURE);
             }
 
-            Document document = builder.parse(new InputSource(xmlFile));
+            InputSource inputSource = new InputSource(xmlFile);
+            inputSource.setEncoding("UTF-8");
+            Document document = builder.parse(inputSource);
             logger.info(xmlFile + " wellformed PASS");
             return document;
         } catch (IOException ie) {

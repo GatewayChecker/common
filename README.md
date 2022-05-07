@@ -32,7 +32,23 @@ Added Ndc class to support generating a GTIN from an NDC code.
 Add a method getSGLN to get a SGLN from a GS1
 Moved GTIN_DTO from ndc project to common. 
 
+2.5.1 
+12/19/21
+Added method getGS1FromCompanyCode
 
+2.6.1 
+2/20/22
+Added Sgln class to convert an SGLN to a GLN
+Added method makeGTINFromDrugID in GTIN class. 
+
+2.7.2 
+3/26/22
+Made UTF-8 the explicit coding when reading the xml document int the XMLDocumentReader class
+
+2.8.2
+4/30/22
+Add Sscc class for extractor. fixed issue with serial number where the indicator digit was included. 
+Added TestSscc class to test the indicator digit issue. 
 ---------------------------------------------
 Where to update the common package version for a new release. 
 pom.xml

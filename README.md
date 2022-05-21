@@ -49,6 +49,13 @@ Made UTF-8 the explicit coding when reading the xml document int the XMLDocument
 4/30/22
 Add Sscc class for extractor. fixed issue with serial number where the indicator digit was included. 
 Added TestSscc class to test the indicator digit issue. 
+
+2.9.1
+5/14/22
+Improved Error handling for SSCC. 
+Added test code for SSCC
+removed default UTF-8 encoding for XML document. Using default UTF-8 caused an error when
+reading a file with a different encoding. 
 ---------------------------------------------
 Where to update the common package version for a new release. 
 pom.xml

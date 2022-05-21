@@ -33,7 +33,7 @@ public class Sgtin extends BaseGtin {
 
 	public void parse() {
 		logger.debug("sgtin:" + sgtin);
-		uniqueId = getStringPartAfterToken(sgtin, "urn:epc:id:sgtin:");
+		uniqueId = getStringPartAfterToken(sgtin, Constants.URN_EPC_ID_SGTIN_TOKEN );
 		logger.debug("sgtin: " + uniqueId);
 		// split on the .
 		sgtinParts = uniqueId.split("\\.");

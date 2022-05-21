@@ -65,7 +65,7 @@ String sgtinGtinPairs[][] = {
 
 	@Test
 	public void testGetCodes_5_3_2_pattern() {
-		Sgtin sgtin = new Sgtin("0371571.012128.03223");
+		Sgtin sgtin = new Sgtin("urn:epc:id:sgtin:0371571.012128.03223");
 		sgtin.parse();
 
 		String expectedCompanyCode = "71571";
@@ -81,7 +81,7 @@ String sgtinGtinPairs[][] = {
 
 	@Test
 	public void testGetCodes_4_4_2_pattern() {
-		Sgtin sgtin = new Sgtin("030093.0720198.1");
+		Sgtin sgtin = new Sgtin("urn:epc:id:sgtin:030093.0720198.1");
 		sgtin.parse();
 
 		String expectedCompanyCode = "0093";
@@ -97,7 +97,7 @@ String sgtinGtinPairs[][] = {
 	// SGLN is GS1 company prefix plus . + enough zeros to make it 12 digits + .0
 	@Test
 	public  void testGetSGLN() {
-	   	Sgtin sgtin = new Sgtin("030093.0720198.1"); // We don't use this number
+	   	Sgtin sgtin = new Sgtin("urn:epc:id:sgtin:030093.0720198.1"); // We don't use this number
 		String sgln = sgtin.getSGLN("0300937");
 
 		Assert.assertEquals("0300937.00000.0", sgln);

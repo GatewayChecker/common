@@ -45,7 +45,6 @@ public class XMLDocumentReader {
             }
 
             InputSource inputSource = new InputSource(xmlFile);
-            inputSource.setEncoding("UTF-8");
             Document document = builder.parse(inputSource);
             logger.info(xmlFile + " wellformed PASS");
             return document;

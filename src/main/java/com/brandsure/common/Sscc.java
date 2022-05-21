@@ -3,10 +3,15 @@ package com.brandsure.common;
 /**
  * Class to extract components from the SSCC Identifier
  * e.g. urn:epc:id:sscc:0310144.0000000101
+ * = sscc:companyPrefix . extensionDigit + serialNumber
  */
 public class Sscc extends BaseGtin {
 
     String sscc; // the raw SSCC label.
+    boolean parsed = false; // flag set to true once we parse the SSCC into parts.
+    String serialNumber = NOT_FOUND;
+    char extensionDigit;
+    String companyPrefix;
 
     public Sscc(String sscc) {
         this.sscc = sscc;
@@ -36,14 +41,21 @@ public class Sscc extends BaseGtin {
      * "2","sscc","urn:epc:id:sscc:0352440.5*","1"
      * "3","sscc","urn:epc:id:sscc:0352440.0*","1"
      *
+     * returns ERROR is no . delimter is found.
      * @param label
      * @return
      */
     public static String convertLastSectionToStar(String label) {
         int dotIndex = label.lastIndexOf('.');
-        // get the digit after the dotIndex
-        String newLabel = label.substring(0, dotIndex + 2) + '*';
-        return newLabel;
+        // Check that the dot is present.
+        if (dotIndex == 0) {
+            logger.error("SSCC is missing the . delimiter " + label);
+            return Constants.ERROR;
+        } else {
+            // get the digit after the dotIndex
+            String newLabel = label.substring(0, dotIndex + 2) + '*';
+            return newLabel;
+        }
     }
 
     /**
@@ -52,17 +64,57 @@ public class Sscc extends BaseGtin {
      * @return the seriol number or empty string if not found
      */
     public String getSerialNumber() {
-        String serialNumber = NOT_FOUND;
-        String id = Sgtin.getStringPartAfterToken(sscc, "urn:epc:id:sscc:");
-        // get the second part of id after the . the sscc as an
-        int dotIndex = id.lastIndexOf(".");
-        if(dotIndex >0)
-        {
-            serialNumber = id.substring(dotIndex + 2);
-        } else
-        {
-            logger.error("sscc missing serial number " + sscc);
+        try {
+            parse();
+            return serialNumber;
+        } catch (IllegalArgumentException e) {
+            return Constants.ERROR;
         }
-        return serialNumber;
+    }
+
+    // Extract a GTIN from the SSCC
+    public String getGtin() {
+        String gtin;
+        try {
+            parse(); // done only once
+            String gtinWoChecksum = extensionDigit + companyPrefix + serialNumber;
+            // length should be 17 digits without checksum
+            String checksum = calcChecksumOddInputDigits(gtinWoChecksum);
+            gtin = gtinWoChecksum + checksum;
+            if (gtin.length() != 18) {
+                String errMsg = "calculated gtin  length is not 18 characters for SSCC " + sscc;
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+        } catch (IllegalArgumentException e) {
+            gtin = Constants.ERROR;
+        }
+        return gtin;
+    }
+
+    // companyPrefix . extensionDigit + serialNumber.
+    private void parse() throws IllegalArgumentException {
+        if (parsed == false) {
+            String id = Sgtin.getStringPartAfterToken(sscc, "urn:epc:id:sscc:");
+            if (id.length() != 18) {
+                String errMsg = "Input sscc length is not 18 characters " + sscc;
+                logger.error(errMsg);
+                throw new IllegalArgumentException((errMsg));
+            }
+            // get the second part of id after the .
+            int dotIndex = id.lastIndexOf(".");
+            if (dotIndex == 0) {
+                String errMsg = "Input sscc is missing the . delimiter " + sscc;
+                logger.error(errMsg);
+                throw new IllegalArgumentException((errMsg));
+            }
+
+            if (dotIndex > 0) {
+                companyPrefix = id.substring(0, dotIndex);
+                serialNumber = id.substring(dotIndex + 2);
+                extensionDigit = id.charAt(dotIndex + 1);
+            }
+            parsed = true;
+        }
     }
 }

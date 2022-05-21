@@ -131,7 +131,14 @@ public class BaseGtin {
         return tenMinusLastDigit(sum);
     }
 
-    public static String getStringPartAfterToken(String fullString, String token) {
+    /**
+     * return the part of the string after the token
+     * @param fullString
+     * @param token
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public static String getStringPartAfterToken(String fullString, String token) throws IllegalArgumentException {
         String lastPart = NOT_FOUND;  // default
         if ((fullString == null) || fullString.isEmpty()) {
             logger.error("input string is null or empty");
@@ -141,8 +148,9 @@ public class BaseGtin {
             if (eventTypeParts.length > 1) {
                 lastPart = eventTypeParts[1];
             } else {
-                logger.info("Can't extract part after trying to split string " + fullString + " on token " + token);
-                lastPart = fullString;
+                String errMsg = "Can't extract part after trying to split string " + fullString + " on token " + token;
+                logger.info(errMsg);
+                throw new IllegalArgumentException(errMsg);
             }
         }
         return lastPart;

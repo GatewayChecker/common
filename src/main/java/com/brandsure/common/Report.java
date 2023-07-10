@@ -10,8 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.io.IOException;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 public class Report {
@@ -82,16 +85,13 @@ public class Report {
         xsdValidated = value;
     }
 
-    // Convert a true to PASS and a false to FAIL
-    private String toPassFail(boolean value) {
-        if (value) {
-            return "PASS";
-        } else {
-            return "FAIL";
-        }
+    /**
+     * Returns an umodifiable list or ErrorMessages
+     * @return
+     */
+    public List<String> getErrorMessages() {
+        return Collections.unmodifiableList(errorMessages);
     }
-
-
 
     public void generateXML() throws IOException {
         PrintWriter pw = null;
@@ -140,6 +140,15 @@ public class Report {
             if (pw != null) {
                 pw.close();
             }
+        }
+    }
+
+    // Convert a true to PASS and a false to FAIL
+    private String toPassFail(boolean value) {
+        if (value) {
+            return "PASS";
+        } else {
+            return "FAIL";
         }
     }
 

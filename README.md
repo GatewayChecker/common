@@ -56,6 +56,13 @@ Improved Error handling for SSCC.
 Added test code for SSCC
 removed default UTF-8 encoding for XML document. Using default UTF-8 caused an error when
 reading a file with a different encoding. 
+
+2.10.1
+add support for the following combinations of fdaLabelerCodeDigit and productCodeDigit in the Gtin class
+4-4-2     9999-9999-99
+5-3-2     99999-999-99
+5-4-1     99999-9999-9
+
 ---------------------------------------------
 Where to update the common package version for a new release. 
 pom.xml

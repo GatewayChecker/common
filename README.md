@@ -58,10 +58,16 @@ removed default UTF-8 encoding for XML document. Using default UTF-8 caused an e
 reading a file with a different encoding. 
 
 2.10.1
+7/13/23
 add support for the following combinations of fdaLabelerCodeDigit and productCodeDigit in the Gtin class
 4-4-2     9999-9999-99
 5-3-2     99999-999-99
 5-4-1     99999-9999-9
+
+Modified the Sgtin class so we could support the  5-4-1 case in the ndc application. 
+Before only 5-3-2 and 4-4-2 were supported. The sgtin was calculating the productCode from the 
+second segment of the Sgtin, but there is not way to determine if it's a 5-4-1 or 5-3-2 only from
+the input Sgtin. 
 
 ---------------------------------------------
 Where to update the common package version for a new release. 

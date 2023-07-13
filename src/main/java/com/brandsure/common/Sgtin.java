@@ -25,7 +25,7 @@ public class Sgtin extends BaseGtin {
 	int part0Length;
 	int part1Length;
 	int companyCodeDigits;
-	int productFamilyDigits;
+
 
 	public Sgtin(String sgtin) {
 		this.sgtin = sgtin;
@@ -44,10 +44,8 @@ public class Sgtin extends BaseGtin {
 		// either 5 + 3 + 2   or 4 + 4 + 2
 		if (part0Length == 7) { // 5 + 3
 			companyCodeDigits = 5;
-			productFamilyDigits = 3;
 		} else if (part0Length == 6) { // 4 + 4
 			companyCodeDigits = 4;
-			productFamilyDigits = 4;
 		} else {
 			logger.error("First SGTIN segment length is " + part0Length + ". Expected length 6 or 7");
 		}
@@ -81,25 +79,12 @@ public class Sgtin extends BaseGtin {
 		String companyCode = sgtinParts[0].substring(2, (companyCodeDigits + 2));
 		return companyCode;
 	}
-	public String getProductFamily() {
-		String productFamily = sgtinParts[1].substring(1, productFamilyDigits + 1);
-		return productFamily;
-	}
-
-	public String getPackagingCode() {
-		String packagingCode = sgtinParts[1].substring(productFamilyDigits + 1, (productFamilyDigits + 2 + 1));
-		return packagingCode;
-	}
 
 	// GS1 = 03 + company code
 	public String getGS1() {
 		String GS1 = getGS1FromFDALabelerCode(getCompanyCode());
 		return GS1;
 	}
-
-
-
-
 
 	/**
 	 * Take a SGTIN type ID and convert the last section to a *

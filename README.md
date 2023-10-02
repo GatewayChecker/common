@@ -69,6 +69,10 @@ Before only 5-3-2 and 4-4-2 were supported. The sgtin was calculating the produc
 second segment of the Sgtin, but there is not way to determine if it's a 5-4-1 or 5-3-2 only from
 the input Sgtin. 
 
+2.11.1
+9/19/23
+Parse method for Sgtin class now throws an exception if the parsing fails.
+
 ---------------------------------------------
 Where to update the common package version for a new release. 
 pom.xml

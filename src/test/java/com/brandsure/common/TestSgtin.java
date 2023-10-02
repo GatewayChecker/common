@@ -23,7 +23,7 @@ public class TestSgtin {
 	
 	// Test for a 12 digit input
 	@Test
-	public void testChecksumEvenInputDigitsGLN() {
+	public void testChecksumEvenInputDigitsGLN() throws Exception {
 		Sgtin sgtin = new Sgtin("0371571.012128.03223"); 
 		// test for 12 digit GLN
 		String checksum = sgtin.calcChecksumEvenInputDigits("037157100000");
@@ -64,7 +64,7 @@ String sgtinGtinPairs[][] = {
 	}
 
 	//@Test
-	public void testGetCodes_5_3_2_pattern() {
+	public void testGetCodes_5_3_2_pattern() throws Exception{
 		Sgtin sgtin = new Sgtin("urn:epc:id:sgtin:0371571.012128.03223");
 		sgtin.parse();
 
@@ -73,7 +73,7 @@ String sgtinGtinPairs[][] = {
 	}
 
 	//@Test
-	public void testGetCodes_4_4_2_pattern() {
+	public void testGetCodes_4_4_2_pattern() throws Exception {
 		Sgtin sgtin = new Sgtin("urn:epc:id:sgtin:030093.0720198.1");
 		sgtin.parse();
 

@@ -2,6 +2,8 @@ package com.brandsure.common;
 
 import org.apache.log4j.Logger;
 
+import java.text.ParseException;
+
 
 /**
  * Takes an SGTIN as input and breaks it into it's component parts.
@@ -31,27 +33,35 @@ public class Sgtin extends BaseGtin {
 		this.sgtin = sgtin;
 	}
 
-	public void parse() {
+	public void parse() throws ParseException {
 		logger.debug("sgtin:" + sgtin);
 		uniqueId = getStringPartAfterToken(sgtin, Constants.URN_EPC_ID_SGTIN_TOKEN );
 		logger.debug("sgtin: " + uniqueId);
 		// split on the .
 		sgtinParts = uniqueId.split("\\.");
+		if (sgtinParts.length != 3) {
+			String errMsg = "Unable to split sgtin " + uniqueId + " into 3 parts separated by a period";
+			logger.error(errMsg);
+			throw new ParseException(errMsg, 3);
+		}
 		part0Length = sgtinParts[0].length();
 		part1Length = sgtinParts[1].length();
+		if ((part0Length + part1Length) != 13) {
+			logger.error("Parsing Sgtin " + sgtin + "part 1 and part 2 length do not equal 13");
+		}
+
+		if ((part0Length < 6) || (part0Length > 11)) {
+			logger.error("Parsing Sgtin " + sgtin + "first segment length should be between 6 to 11 inclusive");
+		}
 
 		// CompanyCodeDigits plus productFamily digits should add to 10.
 		// either 5 + 3 + 2   or 4 + 4 + 2
-		if (part0Length == 7) { // 5 + 3
-			companyCodeDigits = 5;
-		} else if (part0Length == 6) { // 4 + 4
-			companyCodeDigits = 4;
-		} else {
-			logger.error("First SGTIN segment length is " + part0Length + ". Expected length 6 or 7");
-		}
-
+		companyCodeDigits = part0Length - 2;
 
 		serialNumber = sgtinParts[2];
+		if ((serialNumber.length() == 0) || (serialNumber.length() > 20)) {
+			logger.error("Parsing Sgtin " + sgtin + " part 3 length is <1 || >20");
+		}
 	}
 
 	public String getUniqueId() {

@@ -19,7 +19,7 @@ public class Sgln {
     // example GLN 086083300040
     // definition of GLN
     // https://www.gs1us.org/DesktopModules/Bring2mind/DMX/Download.aspx?Command=Core_Download&EntryId=158&language=en-US&PortalId=0&TabId=134
-    public String getGln() {
+    public String getGln() throws IllegalArgumentException{
 
         // need to escape . below since it's a regex field
         String[] sglnParts = sgln.split("\\.");

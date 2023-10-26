@@ -73,6 +73,10 @@ the input Sgtin.
 9/19/23
 Parse method for Sgtin class now throws an exception if the parsing fails.
 
+2.12.1
+10/26/23
+Added throws IllegalArgumentException to the getGln method in the Sgln class.
+
 ---------------------------------------------
 Where to update the common package version for a new release. 
 pom.xml

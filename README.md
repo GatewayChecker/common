@@ -81,6 +81,11 @@ Added throws IllegalArgumentException to the getGln method in the Sgln class.
 11/2/23
 Add regex check for SGLN
 
+2.14.1
+3/20/24
+Add Gln class for converting from GLN to SGLN
+
+
 ---------------------------------------------
 Where to update the common package version for a new release. 
 pom.xml

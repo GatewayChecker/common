@@ -218,7 +218,20 @@ public class Report {
         int index =xmlFilename.lastIndexOf(File.separator);
         // get everything after separator
         String filenameWithoutPath = xmlFilename.substring(index);
-        String outputFilename = outputDir + File.separator + filenameWithoutPath.replace(".xml", "-report.xml");
+        // default in case file doesn't end in .xml.
+        // Avoids using same filename.
+        String outputFilename  = "";
+
+        // Make sure we append -report.xml for either .XML or .xml files
+        if (filenameWithoutPath.contains(".xml")) {
+            outputFilename = outputDir + File.separator + filenameWithoutPath.replace(".xml", "-report.xml");
+        } else if (filenameWithoutPath.contains(".XML")) {
+            outputFilename = outputDir + File.separator + filenameWithoutPath.replace(".XML", "-report.xml");
+        } else {
+            outputFilename  = outputDir + File.separator + filenameWithoutPath + "-report.xml";
+            logger.error("filename does not end in .xml");
+        }
+
         logger.info("Report outputFile " + outputFilename);
         return outputFilename;
     }

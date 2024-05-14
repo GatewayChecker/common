@@ -85,6 +85,14 @@ Add regex check for SGLN
 3/20/24
 Add Gln class for converting from GLN to SGLN
 
+2.15.1
+5/14/24
+* fixed bug where Report did not append -report.xml to the output filename if
+the file ended with uppercase ".XML". The rename of the output file only worked for lowercase .xml. This has been 
+fixed so the both .xml and .XML get an output file name *-report.xml. If the file does not end in .xml,
+then it just appends -report.xml to the end of the filename to avoid reusing the original filename
+to avoid the risk of overwriting the original file. 
+
 
 ---------------------------------------------
 Where to update the common package version for a new release. 

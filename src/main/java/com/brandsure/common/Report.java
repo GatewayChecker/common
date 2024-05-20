@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 public class Report {
     String schemaVersion;
     String date;
-    String softwareVersion = "1.6.1";
+    String softwareVersion = "";
     String xmlFilename;    // Name of the output xml report
     String customMessageFilename = null; // filename for the custom error messages
     String outputDir;
@@ -48,6 +48,15 @@ public class Report {
 
     public void setSchemaVersion(String schema) {
         this.schemaVersion = schema;
+    }
+
+    /**
+     * Constructor
+     * Set the software version of the calling program. To be used in the report output
+     * @param softwareVersion
+     */
+    public Report(String softwareVersion) {
+        this.softwareVersion = softwareVersion;
     }
 
     public void setDate() {
@@ -86,7 +95,7 @@ public class Report {
     }
 
     /**
-     * Returns an umodifiable list or ErrorMessages
+     * Returns an unmodifiable list or ErrorMessages
      * @return
      */
     public List<String> getErrorMessages() {
@@ -217,7 +226,13 @@ public class Report {
     private String makeOutputFilename() {
         int index =xmlFilename.lastIndexOf(File.separator);
         // get everything after separator
-        String filenameWithoutPath = xmlFilename.substring(index);
+        String filenameWithoutPath = "";
+        if (index != -1) {
+            filenameWithoutPath = xmlFilename.substring(index);
+        } else {
+            filenameWithoutPath = xmlFilename;
+        }
+
         // default in case file doesn't end in .xml.
         // Avoids using same filename.
         String outputFilename  = "";

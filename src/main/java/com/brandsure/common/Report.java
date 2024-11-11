@@ -24,6 +24,8 @@ public class Report {
     String xmlFilename;    // Name of the output xml report
     String customMessageFilename = null; // filename for the custom error messages
     String outputDir;
+
+    String applicationName = null; // prefix to prepend to -report.xml so report can be differentiated.
     MessageMapper customMessages = new MessageMapper();
     ArrayList<String> xsdErrorMessages = new ArrayList<String>(); // Only Errors from XSD processing
     ArrayList<String> errorMessages = new ArrayList<String>(); // Generic error messages not related to XSD Errors
@@ -59,6 +61,12 @@ public class Report {
         this.softwareVersion = softwareVersion;
     }
 
+    public Report(String softwareVersion, String applicationName) {
+        this.softwareVersion = softwareVersion;
+        this.applicationName = applicationName;
+    }
+
+
     public void setDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         date = sdf.format(new Date());
@@ -78,6 +86,10 @@ public class Report {
 
     public void setOutputDir(String directory) {
         outputDir = directory;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
     }
 
     public void addXsdErrorMessage(String message) {
@@ -237,18 +249,24 @@ public class Report {
         // Avoids using same filename.
         String outputFilename  = "";
 
-        // Make sure we append -report.xml for either .XML or .xml files
+        // Make sure we append -report.xml for either .XML or .xml files. Add the application name if it's not null
+        String postpend = "-report.xml";
+        if (applicationName != null) {
+            postpend = "-" + applicationName + postpend;
+        }
         if (filenameWithoutPath.contains(".xml")) {
-            outputFilename = outputDir + File.separator + filenameWithoutPath.replace(".xml", "-report.xml");
+            outputFilename = outputDir + File.separator + filenameWithoutPath.replace(".xml", postpend);
         } else if (filenameWithoutPath.contains(".XML")) {
-            outputFilename = outputDir + File.separator + filenameWithoutPath.replace(".XML", "-report.xml");
+            outputFilename = outputDir + File.separator + filenameWithoutPath.replace(".XML", postpend);
         } else {
-            outputFilename  = outputDir + File.separator + filenameWithoutPath + "-report.xml";
+            outputFilename  = outputDir + File.separator + filenameWithoutPath + postpend;
             logger.error("filename does not end in .xml");
         }
 
-        logger.info("Report outputFile " + outputFilename);
-        return outputFilename;
+        // to lowercase to make the report.xml filename consistent with extractor
+        String outputFilenameLowerCase = outputFilename.toLowerCase();
+        logger.info("Report outputFile " + outputFilenameLowerCase);
+        return outputFilenameLowerCase;
     }
 
 }
